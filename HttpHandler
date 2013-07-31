@@ -1,0 +1,103 @@
+using System;
+using System.Configuration;
+using System.Data;
+using System.IO;
+using System.Text;
+using System.Web;
+using System.Web.Configuration;
+using System.Collections.Generic;
+
+    public class Upload : IHttpHandler
+    {
+        public bool IsReusable
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public void ProcessRequest(HttpContext context)
+        {
+            string uniqueId;
+            int totalChunks;
+            string storeName = null;
+
+            try
+            {
+                //Assign the variables from request object
+                string extension = ".mp4";
+
+                int counter = int.Parse(context.Request.Params["counter"]);           //gets the chunk number
+                totalChunks = int.Parse(context.Request.Params["trequests"]);         //gets the total no of chunks
+                uniqueId = context.Request.Params["uniqueId"];                        //gets the unique id from the javascript
+
+                //Chunks to be uploaded onto the server if the content length is not 0
+                if (context.Request.ContentLength > 0)
+                {
+                    //Get the max file size from web.config
+                    HttpRuntimeSection section = (HttpRuntimeSection)ConfigurationManager.GetSection("system.web/httpRuntime");
+                    int maxFileSize = -1;
+
+                    if (section != null)
+                    {
+                        maxFileSize = section.MaxRequestLength * 1024;
+                    }
+
+                    if (context.Request.ContentLength < maxFileSize)
+                    {
+                        storeName = uniqueId;
+
+                        //Getting the chunk data in a buffer
+                        HttpPostedFile postedFile = context.Request.Files[0];
+                        byte[] buffer = null;
+                        using (var binaryReader = new BinaryReader(context.Request.Files[0].InputStream))
+                        {
+                            buffer = binaryReader.ReadBytes(context.Request.Files[0].ContentLength);
+                        }
+
+                        //Temporary directory in which the file is stored
+                        string tempFolder = HttpContext.Current.Server.MapPath("~\\TempFolder\\");
+
+                        if (!(Directory.Exists(tempFolder)))
+                        {
+                            Directory.CreateDirectory(tempFolder);
+                        }
+
+                        string tempPath = tempFolder + storeName + "_" + counter + ".mp4";
+
+                        FileStream writer = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.Read);
+                        writer.Write(buffer, 0, buffer.Length);
+                        writer.Close();
+
+                        int filesInDirectory = Directory.GetFiles(tempFolder).Length;
+
+                        if (filesInDirectory == totalChunks)
+                        {
+                            int maxChunkSize = 100000;
+                            byte[] fileBuffer = new byte[maxChunkSize * totalChunks];
+                            int destinationIndex = 1;
+
+                            for (int i = 1; i < totalChunks + 1; i++)
+                            {
+                                var item = tempFolder + storeName + "_" + i + ".mp4";
+                                FileStream fileReader = new FileStream(item, FileMode.Open, FileAccess.Read);
+                                fileReader.Read(fileBuffer, destinationIndex - 1, (int)fileReader.Length);
+                                destinationIndex += maxChunkSize;
+                                fileReader.Close();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        context.Response.Write("Upload video with max size" + maxFileSize / 1024 + "MB.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                context.Response.Write("Upload error.");
+            }
+        }
+    }
+}
