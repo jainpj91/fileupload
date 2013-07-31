@@ -1,0 +1,18 @@
+<div>
+    <table>
+        <tr>
+            <td>
+                <asp:FileUpload ID="upldVideoFile" runat="server" ToolTip="Upload a video!" size="10" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="hidden" name="counter" id="counter" value="1" />
+                <input type="hidden" name="fname" id="fname" value="" />
+                <input type="hidden" name="trequests" id="trequests" value="1" />
+                <input type="button" id="button" name="button" value="Upload" />
+                <asp:Label ID="lblHelp" runat="server" CssClass="lblHelp"></asp:Label>
+            </td>
+        </tr>
+    </table>
+</div>
