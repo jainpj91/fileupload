@@ -21,6 +21,7 @@ $(function () {
                 $('#fname').val(data.originalFiles[0].name);
                 $('#trequests').val(Math.ceil(data.originalFiles[0].size / maxChunkSize));
                 $('#counter').val('1');
+                $('#uniqueId').val(data.originalFiles[0].name.substring(0,50) + '_' + $('#counter').val() + "_" + currentTime.getTime());
                 alert("Please wait while file is uploaded");
             },
             
