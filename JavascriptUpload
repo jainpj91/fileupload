@@ -1,0 +1,70 @@
+$(function () {
+        var maxChunkSize = 100000; //SET CHUNK SIZE HERE
+        var your_global_var_for_form_submit = '';
+
+        $('#<%= upldVideoFile.ClientID %>').fileupload({
+            maxChunkSize: maxChunkSize,
+
+            url: 'Handler Url',
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("Faliure" + errorThrown);
+            },
+
+            success: function (data, textStatus, jqXHR) {
+                var count = parseInt($('#counter').val()) + 1;
+                $('#counter').val(count);                
+            },
+
+            submit: function (e, data) {
+                test = data.originalFiles[0];
+                $('#fname').val(data.originalFiles[0].name);
+                $('#trequests').val(Math.ceil(data.originalFiles[0].size / maxChunkSize));
+                $('#counter').val('1');
+                $('#uniqueId').val(data.originalFiles[0].name.substring(0,50) + '_' + $('#counter').val() + "_" + currentTime.getTime());
+                $('#dtVideo').val(videoDate);
+                $('#title').val(videoTitle);
+                $('#owner').val(videoOwner);
+                $('#projectId').val(videoProjId);
+
+                alert("Please wait while file is uploaded");
+            },
+            
+            progress: function (e, data) {
+                             
+            },
+
+            send: function (e, data) {
+            
+            },
+
+            chunksend: function (e, data) {
+                $('#totalchunks').val($('#trequests').val());
+            },
+           
+            chunkalways: function (e, data) {
+                chunksentcounter = chunksentcounter + 1;
+                $('#counterchunks').val(chunksentcounter);
+            },
+
+            add: function (e, data) {                
+                your_global_var_for_form_submit = data;
+            },
+         
+            done: function (e, data) {                
+                
+            }
+        });
+
+        $('#button').click(function () {
+            if (ValidateData()) {
+                makeVisible();
+                your_global_var_for_form_submit.submit();
+                return true;
+            }
+            else {
+                alert("Uploading Failed");
+                return false;
+            }
+        });
+    });
