@@ -11,26 +11,20 @@ $(function () {
                 alert("Faliure" + errorThrown);
             },
 
-            success: function (data, textStatus, jqXHR) {
+            success: function (data, textStatus, jqXHR) {       // success after each chunk uploaded
                 var count = parseInt($('#counter').val()) + 1;
-                $('#counter').val(count);                
+                $('#counter').val(count);
             },
 
-            submit: function (e, data) {
+            submit: function (e, data) {                        // Data can be send from here
                 test = data.originalFiles[0];
                 $('#fname').val(data.originalFiles[0].name);
                 $('#trequests').val(Math.ceil(data.originalFiles[0].size / maxChunkSize));
                 $('#counter').val('1');
-                $('#uniqueId').val(data.originalFiles[0].name.substring(0,50) + '_' + $('#counter').val() + "_" + currentTime.getTime());
-                $('#dtVideo').val(videoDate);
-                $('#title').val(videoTitle);
-                $('#owner').val(videoOwner);
-                $('#projectId').val(videoProjId);
-
                 alert("Please wait while file is uploaded");
             },
             
-            progress: function (e, data) {
+            progress: function (e, data) {                      // Progress bar code is done here
                              
             },
 
@@ -39,32 +33,24 @@ $(function () {
             },
 
             chunksend: function (e, data) {
-                $('#totalchunks').val($('#trequests').val());
+                
             },
            
             chunkalways: function (e, data) {
-                chunksentcounter = chunksentcounter + 1;
-                $('#counterchunks').val(chunksentcounter);
+            
             },
 
             add: function (e, data) {                
                 your_global_var_for_form_submit = data;
             },
          
-            done: function (e, data) {                
-                
+            done: function (e, data) {                          // Function to be performed when all chunks are uploaded
+
             }
         });
 
         $('#button').click(function () {
-            if (ValidateData()) {
-                makeVisible();
                 your_global_var_for_form_submit.submit();
                 return true;
-            }
-            else {
-                alert("Uploading Failed");
-                return false;
-            }
         });
     });
