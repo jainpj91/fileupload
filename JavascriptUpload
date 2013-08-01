@@ -1,3 +1,8 @@
+<script type="text/javascript" src="JavaScript/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="JavaScript/vendor/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="JavaScript/jquery.fileupload.js"></script>
+<script type="text/javascript" src="JavaScript/jquery-1.6.0.min.js"></script>
+<script type="text/javascript">
 $(function () {
         var maxChunkSize = 100000; //SET CHUNK SIZE HERE
         var your_global_var_for_form_submit = '';
@@ -55,3 +60,4 @@ $(function () {
                 return true;
         });
     });
+</script>
